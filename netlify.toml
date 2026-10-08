@@ -1,0 +1,32 @@
+[build]
+  publish = "."
+  # No build command needed – pure static site
+
+# Inject Supabase credentials at deploy time
+# Set these in Netlify UI → Site settings → Environment variables
+#   SUPABASE_URL
+#   SUPABASE_ANON_KEY
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Required for microphone access on modern browsers
+    Permissions-Policy = "microphone=(self)"
+    # Security headers
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# SPA-style fallback (optional – we use query params)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+  conditions = {Role = ["admin"]}   # effectively never matches → only real 404s
+
+# Better simple redirect for unknown paths
+[[redirects]]
+  from = "/room/*"
+  to = "/index.html"
+  status = 200
